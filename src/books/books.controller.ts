@@ -30,29 +30,37 @@ export class BookController {
   async create(
     @Body() createBookDto: CreateBookDto,
   ): Promise<ResponseSuccessBookDto> {
-    this.bookService.create(createBookDto);
+    try {
+      this.bookService.create(createBookDto);
 
-    const response: ResponseSuccessBookDto = {
-      statusCode: 201,
-      message: 'Success create book',
-      data: createBookDto,
-    };
+      const response: ResponseSuccessBookDto = {
+        statusCode: 201,
+        message: 'Success create book',
+        data: createBookDto,
+      };
 
-    return response;
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @Get('/interface')
   @HttpCode(200)
   async findAll(): Promise<ResponseSuccessBookDto> {
-    const books: Book[] = this.bookService.findAll();
+    try {
+      const books: Book[] = this.bookService.findAll();
 
-    const response: ResponseSuccessBookDto = {
-      statusCode: 200,
-      message: 'Success get books',
-      data: books,
-    };
+      const response: ResponseSuccessBookDto = {
+        statusCode: 200,
+        message: 'Success get books',
+        data: books,
+      };
 
-    return response;
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @Get('/interface/:id')
@@ -60,26 +68,30 @@ export class BookController {
     @Param('id') id: number,
     @Res() res: Response,
   ): Promise<ResponseSuccessBookDto | ResponseErrorBookDto> {
-    const book: BookDto | undefined = this.bookService.findById(id);
+    try {
+      const book: BookDto | undefined = this.bookService.findById(id);
 
-    if (!book) {
-      // Handle the case where no book is found with the given ID
-      const errorResponse: ResponseErrorBookDto = {
-        statusCode: 404,
-        message: `Book with ID ${id} not found`,
+      if (!book) {
+        // Handle the case where no book is found with the given ID
+        const errorResponse: ResponseErrorBookDto = {
+          statusCode: 404,
+          message: `Book with ID ${id} not found`,
+        };
+
+        res.status(HttpStatus.NOT_FOUND).json(errorResponse); // Set status code to 404
+        return;
+      }
+
+      const response: ResponseSuccessBookDto = {
+        statusCode: 200,
+        message: `Success get book by ID ${id}`,
+        data: book,
       };
 
-      res.status(HttpStatus.NOT_FOUND).json(errorResponse); // Set status code to 404
-      return;
+      res.status(HttpStatus.OK).json(response); // Set status code to 200
+    } catch (error) {
+      throw new Error(error);
     }
-
-    const response: ResponseSuccessBookDto = {
-      statusCode: 200,
-      message: `Success get book by ID ${id}`,
-      data: book,
-    };
-
-    res.status(HttpStatus.OK).json(response); // Set status code to 200
   }
 
   @Patch('/interface/:id')
