@@ -47,24 +47,4 @@ export class BookService {
 
     return book;
   }
-
-  createBook(): string {
-    return 'This is post book endpoint';
-  }
-
-  getBook(): string {
-    return 'This is get book endpoint';
-  }
-
-  getBooks(): string {
-    return 'This is get all books endpoint';
-  }
-
-  updateBook(): string {
-    return 'This is update book enpoint';
-  }
-
-  deleteBook(): string {
-    return 'This is delete book endpoint';
-  }
 }
