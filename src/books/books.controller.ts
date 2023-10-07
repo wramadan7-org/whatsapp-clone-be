@@ -9,6 +9,7 @@ import {
   Param,
   HttpStatus,
   Res,
+  HttpException,
 } from '@nestjs/common';
 import { BookService } from './books.service';
 import {
