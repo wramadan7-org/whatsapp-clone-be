@@ -1,14 +1,22 @@
-import { Module } from '@nestjs/common';
+import {
+  Module,
+  NestModule,
+  // RequestMethod,
+  MiddlewareConsumer,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BookController } from './books/books.controller';
-import { BookService } from './books/books.service';
-import { BookshelvesController } from './bookshelveses/bookshelves.controller';
-import { BookshelvesService } from './bookshelveses/bookshelves.service';
+import { BookModule } from './books/books.module';
+import { BookshelvesModule } from './bookshelveses/bookshelves.module';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 @Module({
-  imports: [],
-  controllers: [AppController, BookController, BookshelvesController],
-  providers: [AppService, BookService, BookshelvesService],
+  imports: [BookModule, BookshelvesModule],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('books');
+  }
+}

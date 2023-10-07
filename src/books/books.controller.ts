@@ -25,7 +25,7 @@ import { Response } from 'express';
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
-  @Post('/interface')
+  @Post()
   @HttpCode(201)
   async create(
     @Body() createBookDto: CreateBookDto,
@@ -45,7 +45,7 @@ export class BookController {
     }
   }
 
-  @Get('/interface')
+  @Get()
   @HttpCode(200)
   async findAll(): Promise<ResponseSuccessBookDto> {
     try {
@@ -63,7 +63,7 @@ export class BookController {
     }
   }
 
-  @Get('/interface/:id')
+  @Get('/:id')
   async findById(
     @Param('id') id: number,
     @Res() res: Response,
@@ -94,7 +94,7 @@ export class BookController {
     }
   }
 
-  @Patch('/interface/:id')
+  @Patch('/:id')
   async updateById(
     @Param('id') id: number,
     @Body() req: UpdateBookDto,
@@ -127,7 +127,7 @@ export class BookController {
     }
   }
 
-  @Delete('/interface/:id')
+  @Delete('/:id')
   async deleteById(
     @Param('id') id: number,
     @Res() res: Response,
