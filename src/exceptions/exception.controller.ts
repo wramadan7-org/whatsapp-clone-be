@@ -1,6 +1,14 @@
-import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  UseFilters,
+} from '@nestjs/common';
 import { BookService } from 'src/books/books.service';
-import { NotFoundException } from './buildin/NotFoundException';
+import { NotFoundException } from '../common/exception/notFound.exception';
+import { HttpExceptionFilter } from 'src/common/exception/http-exception.filter';
+import { ForbiddenException } from 'src/common/exception/forbidden.exception';
 
 @Controller('/exception')
 export class ExceptionController {
@@ -31,5 +39,11 @@ export class ExceptionController {
   @Get('/buildin')
   async exceptionNotFoundBuildin(): Promise<void> {
     throw new NotFoundException('Exception buildin not found'); // The argument in NotFoundException is optional
+  }
+
+  @Get('/http-exception-filter')
+  @UseFilters(new HttpExceptionFilter())
+  async exceptionFilter(): Promise<void> {
+    throw new ForbiddenException();
   }
 }
