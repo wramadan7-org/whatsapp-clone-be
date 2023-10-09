@@ -9,7 +9,7 @@ import {
   Param,
   HttpStatus,
   Res,
-  HttpException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { BookService } from './books.service';
 import {
@@ -66,7 +66,7 @@ export class BookController {
 
   @Get('/:id')
   async findById(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Res() res: Response,
   ): Promise<ResponseSuccessBookDto | ResponseErrorBookDto> {
     try {
@@ -97,7 +97,7 @@ export class BookController {
 
   @Patch('/:id')
   async updateById(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() req: UpdateBookDto,
     @Res() res: Response,
   ): Promise<ResponseSuccessBookDto | ResponseErrorBookDto> {
@@ -130,7 +130,7 @@ export class BookController {
 
   @Delete('/:id')
   async deleteById(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Res() res: Response,
   ): Promise<void> {
     try {

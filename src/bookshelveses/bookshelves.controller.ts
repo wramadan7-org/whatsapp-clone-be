@@ -9,6 +9,7 @@ import {
   Get,
   Patch,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import {
@@ -80,7 +81,8 @@ export class BookshelvesController {
   @Get('/:id')
   @HttpCode(HttpStatus.OK)
   async findById(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe)
+    id: number,
     @Res() res: Response,
   ): Promise<ResponseSuccessBookshelvesDto> {
     try {
@@ -104,7 +106,7 @@ export class BookshelvesController {
   @Patch('/:id')
   @HttpCode(HttpStatus.OK)
   async updateById(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() bookshelvesRequest: UpdateBookshelvesDto,
     @Res() res: Response,
   ): Promise<ResponseSuccessBookshelvesDto> {
@@ -130,7 +132,7 @@ export class BookshelvesController {
   @Delete('/:id')
   @HttpCode(HttpStatus.OK)
   async deleteById(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Res() res: Response,
   ): Promise<ResponseSuccessBookshelvesDto | ResponseErrorBookshelvesDto> {
     try {
