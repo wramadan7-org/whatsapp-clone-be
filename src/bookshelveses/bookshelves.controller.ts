@@ -20,6 +20,9 @@ import {
 import { Response } from 'express';
 import { BookshelvesService } from './bookshelves.service';
 import { Bookshelves } from './interfaces/bookshelves.interface';
+import { BadRequestException } from 'src/common/exception/badRequest.exception';
+import { NotFoundException } from 'src/common/exception/notFound.exception';
+import { ConflictException } from 'src/common/exception/conflict.exception';
 
 @Controller('/bookshelves')
 export class BookshelvesController {
@@ -30,20 +33,10 @@ export class BookshelvesController {
   async create(
     @Body() bookshelvesRequest: BookshelvesDto,
     @Res() res: Response,
-  ): Promise<ResponseSuccessBookshelvesDto | ResponseErrorBookshelvesDto> {
+  ): Promise<ResponseSuccessBookshelvesDto> {
     try {
       const bookshelves: BookshelvesDto =
         this.bookshelvesService.create(bookshelvesRequest);
-
-      if (!bookshelves) {
-        const errorResponse: ResponseErrorBookshelvesDto = {
-          statusCode: HttpStatus.CONFLICT,
-          message: HttpStatus[HttpStatus.CONFLICT],
-        };
-
-        res.status(HttpStatus.CONFLICT).json(errorResponse);
-        return;
-      }
 
       const response: ResponseSuccessBookshelvesDto = {
         statusCode: HttpStatus.CREATED,
@@ -52,8 +45,9 @@ export class BookshelvesController {
       };
 
       res.status(HttpStatus.CREATED).json(response);
+      return;
     } catch (error) {
-      throw new Error(error);
+      throw new BadRequestException('Request not valid');
     }
   }
 
@@ -88,19 +82,9 @@ export class BookshelvesController {
   async findById(
     @Param('id') id: number,
     @Res() res: Response,
-  ): Promise<ResponseSuccessBookshelvesDto | ResponseErrorBookshelvesDto> {
+  ): Promise<ResponseSuccessBookshelvesDto> {
     try {
       const bookshelves: BookshelvesDto = this.bookshelvesService.findById(id);
-
-      if (!bookshelves) {
-        const errorResponse: ResponseErrorBookshelvesDto = {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: `Bookshelves with ID ${id} not found`,
-        };
-
-        res.status(HttpStatus.NOT_FOUND).json(errorResponse);
-        return;
-      }
 
       const successResponse: ResponseSuccessBookshelvesDto = {
         statusCode: HttpStatus.OK,
@@ -109,8 +93,11 @@ export class BookshelvesController {
       };
 
       res.status(HttpStatus.OK).json(successResponse);
+      return;
     } catch (error) {
-      throw new Error(error);
+      if (error instanceof NotFoundException)
+        throw new NotFoundException(`Bookshelves with ID ${id} not found`);
+      throw new ConflictException('Conflict');
     }
   }
 
@@ -120,32 +107,12 @@ export class BookshelvesController {
     @Param('id') id: number,
     @Body() bookshelvesRequest: UpdateBookshelvesDto,
     @Res() res: Response,
-  ): Promise<ResponseSuccessBookshelvesDto | ResponseErrorBookshelvesDto> {
+  ): Promise<ResponseSuccessBookshelvesDto> {
     try {
       const bookshelves = this.bookshelvesService.findById(id);
 
-      if (!bookshelves) {
-        const errorResponse: ResponseErrorBookshelvesDto = {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: `Bookshelves with ID ${id} not found`,
-        };
-
-        res.status(HttpStatus.NOT_FOUND).json(errorResponse);
-        return;
-      }
-
       const update: BookshelvesDto | undefined =
         this.bookshelvesService.updateById(bookshelves, bookshelvesRequest);
-
-      if (!update) {
-        const errorResponse: ResponseErrorBookshelvesDto = {
-          statusCode: HttpStatus.CONFLICT,
-          message: HttpStatus[HttpStatus.CONFLICT],
-        };
-
-        res.status(HttpStatus.CONFLICT).json(errorResponse);
-        return;
-      }
 
       const successResponse: ResponseSuccessBookshelvesDto = {
         statusCode: HttpStatus.OK,
@@ -154,8 +121,9 @@ export class BookshelvesController {
       };
 
       res.status(HttpStatus.OK).json(successResponse);
+      return;
     } catch (error) {
-      throw new Error(error);
+      throw new BadRequestException();
     }
   }
 
@@ -169,16 +137,6 @@ export class BookshelvesController {
       const bookshelves: BookshelvesDto =
         this.bookshelvesService.deleteById(id);
 
-      if (!bookshelves) {
-        const errorResponse: ResponseErrorBookshelvesDto = {
-          statusCode: HttpStatus.CONFLICT,
-          message: HttpStatus[HttpStatus.CONFLICT],
-        };
-
-        res.status(HttpStatus.CONFLICT).json(errorResponse);
-        return;
-      }
-
       const successResponse: ResponseSuccessBookshelvesDto = {
         statusCode: HttpStatus.OK,
         message: `Success delete bookshelves with ID ${id}`,
@@ -186,8 +144,13 @@ export class BookshelvesController {
       };
 
       res.status(HttpStatus.OK).json(successResponse);
+      return;
     } catch (error) {
-      throw new Error(error);
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(`Bookshelves with ID ${id} not found`);
+      }
+
+      throw new ConflictException('Conflict');
     }
   }
 }
