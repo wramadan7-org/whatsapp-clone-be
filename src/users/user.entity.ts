@@ -5,11 +5,11 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', nullable: false })
-  first_name: string;
+  @Column({ name: 'first_name', type: 'varchar', nullable: false })
+  firstName: string;
 
-  @Column({ type: 'varchar', nullable: false })
-  last_name: string;
+  @Column({ name: 'last_name', type: 'varchar', nullable: false })
+  lastName: string;
 
   @Column({ type: 'varchar', nullable: true })
   profile: string | null;
@@ -17,9 +17,19 @@ export class UserEntity {
   @Column({ type: 'varchar', nullable: true })
   info: string | null;
 
-  @Column('date')
-  last_update_info: Date;
+  @Column({ name: 'last_update_info', type: 'date' })
+  lastUpdateInfo: Date;
 
-  @Column({ type: 'varchar', nullable: false })
-  phone_number: string;
+  @Column({ name: 'phone_number', type: 'varchar', nullable: false })
+  phoneNumber: string;
+
+  @Column({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' }) // Define createdAt column manually
+  createdAt: Date;
+
+  @Column({
+    name: 'updated_at',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  }) // Define updatedAt column manually
+  updatedAt: Date;
 }

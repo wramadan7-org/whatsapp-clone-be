@@ -16,6 +16,10 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 // import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './users/user.entity';
+import { AuthModule } from './auth/auth.module';
+import { MessagesModule } from './messages/messages.module';
+import { MessageEntity } from './messages/messages.entity';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -30,7 +34,7 @@ import { UserEntity } from './users/user.entity';
       username: 'postgres',
       password: 'rama2000',
       database: 'whatsapp_clone',
-      entities: [UserEntity],
+      entities: [UserEntity, MessageEntity],
       synchronize: false,
     }),
     BookModule,
@@ -38,6 +42,9 @@ import { UserEntity } from './users/user.entity';
     ExceptionModule,
     BookshelvesBookModule,
     UserModule,
+    AuthModule,
+    MessagesModule,
+    GatewayModule,
   ],
   controllers: [AppController],
   providers: [AppService],
